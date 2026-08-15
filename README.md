@@ -1,6 +1,6 @@
 # komodocicdtest1 – Edge AI Detection Stack (Komodo CI/CD POC)
 
-# Edit to force webhook to Komodo 1
+# Edit to force webhook to Komodo 2
 
 A minimal proof-of-concept that demonstrates using **GitHub Actions** +
 **Komodo** (via WebHooks) to automatically update a fleet of edge computers
