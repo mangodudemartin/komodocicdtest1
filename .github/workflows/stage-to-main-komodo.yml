@@ -42,7 +42,7 @@ jobs:
             --head "${SOURCE_REF}" \
             --state open \
             --json number \
-            --jq '.[0].number')"
+            --jq 'first(.[] | .number) // empty')"
 
           if [ -n "${existing_pr}" ]; then
             echo "PR #${existing_pr} from ${SOURCE_REF} to main already exists."
