@@ -1,0 +1,6 @@
+# Komodo deployment signal
+processed_at_utc=2026-08-15T18:51:05Z
+source_branch=stage
+source_commit=f32ca6796692159607d36fde08cc063f5d30fb20
+workflow_run_id=31902259419
+workflow_run_number=1
