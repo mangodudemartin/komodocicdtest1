@@ -1,17 +1,4 @@
-version: "3.9"
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Edge AI Detection Stack
-#
-# Services:
-#   mosquitto    – Eclipse Mosquitto MQTT broker (data bus)
-#   alert-filter – Redpanda Connect pipeline that reads detections/raw and
-#                  forwards actionable alerts (confidence ≥ 0.75) to alerts
-# ─────────────────────────────────────────────────────────────────────────────
-
 services:
-
-  # ── MQTT Broker ─────────────────────────────────────────────────────────────
   mosquitto:
     image: eclipse-mosquitto:2.0
     container_name: mosquitto
@@ -27,7 +14,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # ── Redpanda Connect Alert Filter ────────────────────────────────────────────
   alert-filter:
     image: docker.redpanda.com/redpandadata/connect:4.44.0
     container_name: alert-filter
