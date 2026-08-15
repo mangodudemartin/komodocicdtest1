@@ -57,6 +57,9 @@ mosquitto_sub -h localhost -t detections/raw -v
 
 ## CI/CD with Komodo
 
-GitHub Actions triggers a Komodo WebHook on every push to `main`.  Komodo
-then pulls the latest image / compose file on each registered edge device,
-ensuring the entire fleet is updated automatically.
+The promotion flow is:
+
+1. Developers push changes to `stage`
+2. GitHub Actions runs the stage validation workflow
+3. After the workflow succeeds, GitHub Actions creates a pull request from `stage` into `main`
+4. A developer reviews and merges that pull request before anything lands on `main`
