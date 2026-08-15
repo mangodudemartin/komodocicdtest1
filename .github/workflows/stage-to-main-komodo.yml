@@ -1,0 +1,62 @@
+name: Stage Build and Main Deploy Signal
+
+on:
+  push:
+    branches:
+      - stage
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-signal:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Simulate build and publish work
+        run: |
+          echo "Starting fake build for stage commit ${GITHUB_SHA}"
+          echo "Creating containers now"
+          echo "Publishing containers now"
+          echo "Build/publish simulation complete"
+
+      - name: Commit deployment signal to main
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          SOURCE_REF: ${{ github.ref_name }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin main
+          git checkout -B main origin/main
+
+          mkdir -p .komodo
+          TIMESTAMP="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
+          {
+            echo "# Komodo deployment signal"
+            echo "processed_at_utc=${TIMESTAMP}"
+            echo "source_branch=${SOURCE_REF}"
+            echo "source_commit=${SOURCE_SHA}"
+            echo "workflow_run_id=${RUN_ID}"
+            echo "workflow_run_number=${RUN_NUMBER}"
+          } > .komodo/deploy-signal.txt
+
+          git add .komodo/deploy-signal.txt
+          if git diff --cached --quiet; then
+            echo "No main-branch deployment signal changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: trigger komodo deploy from ${SOURCE_REF} ${SOURCE_SHA:0:7}"
+          git push origin HEAD:main
