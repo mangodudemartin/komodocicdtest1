@@ -26,4 +26,4 @@ jobs:
           curl -f -X POST \
             -H "Content-Type: application/json" \
             -d '{"event":"deploy","repo":"${{ github.repository }}","ref":"${{ github.ref }}","sha":"${{ github.sha }}"}' \
-            https://iotkomodopoc.westus2.cloudapp.azure.com//listener/github/stack/christeststack_deployworkflowautomation/deploy
+            http://iotkomodopoc.westus2.cloudapp.azure.com//listener/github/stack/christeststack_deployworkflowautomation/deploy
