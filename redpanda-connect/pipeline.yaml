@@ -1,0 +1,50 @@
+# Redpanda Connect (benthos) Pipeline Configuration
+# ---------------------------------------------------
+# Reads detection events from the MQTT topic `detections/raw`, evaluates
+# each message, and forwards only "actionable alerts" (confidence >= 0.75)
+# to the MQTT topic `alerts`.
+
+input:
+  mqtt:
+    urls:
+      - tcp://mosquitto:1883
+    topics:
+      - detections/raw
+    client_id: redpanda-connect-in
+    qos: 1
+    # Wait up to 10 s for broker to become available before failing
+    connect_timeout: 10s
+
+pipeline:
+  processors:
+    # Parse the raw JSON payload from the inference container
+    - bloblang: |
+        root = this
+
+    # Filter: only pass messages where confidence >= 0.75
+    - bloblang: |
+        root = if this.confidence >= 0.75 {
+          {
+            "alert": true,
+            "timestamp": this.timestamp,
+            "label": this.label,
+            "confidence": this.confidence,
+            "bounding_box": this.bounding_box,
+            "camera_id": this.camera_id
+          }
+        } else {
+          deleted()
+        }
+
+output:
+  mqtt:
+    urls:
+      - tcp://mosquitto:1883
+    topic: alerts
+    client_id: redpanda-connect-out
+    qos: 1
+    connect_timeout: 10s
+
+logger:
+  level: INFO
+  format: logfmt
